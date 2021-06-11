@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Service;
 import com.tweetapp.main.entity.Tweets;
 import com.tweetapp.main.entity.User;
 import com.tweetapp.main.exception.model.ErrorCode;
+import com.tweetapp.main.model.TweetLike;
+import com.tweetapp.main.model.TweetReply;
 import com.tweetapp.main.payload.request.ForgetPasswordRequest;
 import com.tweetapp.main.payload.request.RegistrationRequest;
 import com.tweetapp.main.payload.request.TweetAddRequest;
@@ -234,7 +238,50 @@ public class TweetServiceImpl implements TweetService {
 		Optional<Tweets> optionalTweets = tweetsRepository.findById(id);
 
 		if (optionalTweets.isPresent()) {
+			Tweets tweets = optionalTweets.get();
 
+			List<TweetLike> likes = tweets.getLikes();
+
+			if (likes.stream().noneMatch(tweet -> StringUtils.equals(username, tweet.getUsername()))) {
+				likes.add(TweetLike.builder().username(username).build());
+
+				tweets.setLikes(likes);
+
+				tweetsRepository.save(tweets);
+			}
+		}
+	}
+
+	@Override
+	public void dislikeTweet(String username, String id) {
+		Optional<Tweets> optionalTweets = tweetsRepository.findById(id);
+
+		if (optionalTweets.isPresent()) {
+			Tweets tweets = optionalTweets.get();
+
+			List<TweetLike> likes = tweets.getLikes();
+
+			Predicate<TweetLike> usernamePredicate = tweet -> !StringUtils.equals(username, tweet.getUsername());
+			List<TweetLike> updatedLikes = likes.stream().filter(usernamePredicate).collect(Collectors.toList());
+
+			tweets.setLikes(updatedLikes);
+
+			tweetsRepository.save(tweets);
+		}
+	}
+
+	@Override
+	public void replyTweet(String username, String id, String reply) {
+		Optional<Tweets> optionalTweets = tweetsRepository.findById(id);
+
+		if (optionalTweets.isPresent()) {
+			Tweets tweets = optionalTweets.get();
+
+			List<TweetReply> replies = tweets.getReplies();
+			replies.add(TweetReply.builder().username(username).message(reply).build());
+
+			tweets.setReplies(replies);
+			tweetsRepository.save(tweets);
 		}
 	}
 

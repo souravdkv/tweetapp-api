@@ -36,4 +36,8 @@ public interface TweetService {
 	TweetDeleteResponse deleteTweet(String username, String id);
 
 	void likeTweet(String username, String id);
+
+	void dislikeTweet(String username, String id);
+
+	void replyTweet(String username, String id, String reply);
 }

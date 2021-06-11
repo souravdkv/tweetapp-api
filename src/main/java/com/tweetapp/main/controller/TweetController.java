@@ -1,13 +1,16 @@
 package com.tweetapp.main.controller;
 
 import static com.tweetapp.main.util.ControllerConstants.ADD_TWEET;
-import static com.tweetapp.main.util.ControllerConstants.*;
+import static com.tweetapp.main.util.ControllerConstants.ALL_TWEETS;
 import static com.tweetapp.main.util.ControllerConstants.ALL_TWEETS_USERNAME;
 import static com.tweetapp.main.util.ControllerConstants.ALL_USERS;
 import static com.tweetapp.main.util.ControllerConstants.DELETE_TWEET;
+import static com.tweetapp.main.util.ControllerConstants.DISLIKE_TWEET;
 import static com.tweetapp.main.util.ControllerConstants.FORGET_PASSWORD;
+import static com.tweetapp.main.util.ControllerConstants.LIKE_TWEET;
 import static com.tweetapp.main.util.ControllerConstants.LOGIN;
 import static com.tweetapp.main.util.ControllerConstants.REGISTER;
+import static com.tweetapp.main.util.ControllerConstants.REPLY_TWEET;
 import static com.tweetapp.main.util.ControllerConstants.SEARCH_USERNAME;
 import static com.tweetapp.main.util.ControllerConstants.TWEETS_API_PATH;
 import static com.tweetapp.main.util.ControllerConstants.UPDATE_TWEET;
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tweetapp.main.payload.request.ForgetPasswordRequest;
 import com.tweetapp.main.payload.request.RegistrationRequest;
 import com.tweetapp.main.payload.request.TweetAddRequest;
+import com.tweetapp.main.payload.request.TweetReplyRequest;
 import com.tweetapp.main.payload.response.ForgetPasswordResponse;
 import com.tweetapp.main.payload.response.LoginResponse;
 import com.tweetapp.main.payload.response.RegistrationResponse;
@@ -138,6 +142,23 @@ public class TweetController {
 	public ResponseEntity<Void> likeTweet(@PathVariable String username, @PathVariable String id) {
 
 		tweetService.likeTweet(username, id);
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@PutMapping(DISLIKE_TWEET)
+	public ResponseEntity<Void> dislikeTweet(@PathVariable String username, @PathVariable String id) {
+
+		tweetService.dislikeTweet(username, id);
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@PostMapping(REPLY_TWEET)
+	public ResponseEntity<Void> replyTweet(@PathVariable String username, @PathVariable String id,
+			@Valid @RequestBody TweetReplyRequest replyRequest) {
+
+		tweetService.replyTweet(username, id, replyRequest.getReply());
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

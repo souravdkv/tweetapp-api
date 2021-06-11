@@ -13,4 +13,6 @@ public class ControllerConstants {
 	public static final String UPDATE_TWEET = "/{username}/update/{id}";
 	public static final String DELETE_TWEET = "/{username}/delete/{id}";
 	public static final String LIKE_TWEET = "/{username}/like/{id}";
+	public static final String DISLIKE_TWEET = "/{username}/dislike/{id}";
+	public static final String REPLY_TWEET = "/{username}/reply/{id}";
 }
