@@ -1,6 +1,5 @@
 package com.tweetapp.main.payload.request;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -13,25 +12,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegistrationRequest {
-
+public class ForgetPasswordRequest {
 	@NotBlank
-	private String firstName;
-
-	@NotBlank
-	private String lastName;
-
-	@NotBlank
-	@Email
-	private String email;
-
-	@NotBlank
-	private String username;
+	private String phoneNumber;
 
 	@NotBlank
 	@Size(min = 8)
 	private String password;
-
-	@NotBlank
-	private String phoneNumber;
 }
