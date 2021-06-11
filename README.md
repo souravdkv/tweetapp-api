@@ -1,2 +1,2 @@
-# tweetapp_springboot
+# TweetApp API
 Tweet API using springboot
