@@ -120,10 +120,6 @@ public class TweetServiceImpl implements TweetService {
 				.add(TweetsResponse.builder().id(tweet.getId()).name(tweet.getFirstName() + " " + tweet.getLastName())
 						.tweets(tweet.getTweet()).likes(tweet.getLikes()).replies(tweet.getReplies()).build()));
 
-		// sort the tweets by name
-		Comparator<TweetsResponse> tweetsResponseComparator = (t1, t2) -> t1.getName().compareTo(t2.getName());
-		tweetsResponse.sort(tweetsResponseComparator);
-
 		return tweetsResponse;
 	}
 
