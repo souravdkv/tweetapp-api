@@ -113,6 +113,8 @@ public class TweetServiceImpl implements TweetService {
 		List<TweetsResponse> tweetsResponse = new ArrayList<>();
 		List<Tweets> tweets = tweetsRepository.findAll();
 
+		tweets.sort((t1, t2) -> t1.getPostTime().compareTo(t2.getPostTime()));
+		
 		tweets.forEach(tweet -> tweetsResponse
 				.add(TweetsResponse.builder().id(tweet.getId()).name(tweet.getFirstName() + " " + tweet.getLastName())
 						.tweets(tweet.getTweet()).likes(tweet.getLikes()).replies(tweet.getReplies()).build()));
@@ -159,13 +161,11 @@ public class TweetServiceImpl implements TweetService {
 		List<TweetsResponse> tweetsResponse = new ArrayList<>();
 		List<Tweets> tweets = tweetsRepository.findAllByUsername(username);
 
+		tweets.sort((t1, t2) -> t1.getPostTime().compareTo(t2.getPostTime()));
+		
 		tweets.forEach(tweet -> tweetsResponse
 				.add(TweetsResponse.builder().id(tweet.getId()).name(tweet.getFirstName() + " " + tweet.getLastName())
 						.tweets(tweet.getTweet()).likes(tweet.getLikes()).replies(tweet.getReplies()).build()));
-
-		// sort the tweets by name
-		Comparator<TweetsResponse> tweetsResponseComparator = (t1, t2) -> t1.getName().compareTo(t2.getName());
-		tweetsResponse.sort(tweetsResponseComparator);
 
 		return tweetsResponse;
 	}
