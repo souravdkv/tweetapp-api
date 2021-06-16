@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -28,11 +30,15 @@ import com.tweetapp.main.exception.model.ErrorInfo;
 @ControllerAdvice
 public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 
+	private static final Logger LOGGER = LogManager.getLogger(TweetAppExceptionHandler.class);
+	
 	@Autowired
 	private MessageSource messageSource;
 
 	@ExceptionHandler(BadCredentialsException.class)
 	public ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex) {
+		LOGGER.error(ex.getMessage());
+		
 		String message = messageSource.getMessage("user.login.failed", null, LocaleContextHolder.getLocale());
 		return new ResponseEntity<>(
 				new ErrorInfo(HttpStatus.UNAUTHORIZED, ErrorCode.ERR_ACCESS_DENIED.toString(), message, new Date()),
@@ -42,6 +48,8 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(InternalAuthenticationServiceException.class)
 	public ResponseEntity<Object> handleInternalAuthenticationServiceException(
 			InternalAuthenticationServiceException ex) {
+		LOGGER.error(ex.getMessage());
+		
 		String message = messageSource.getMessage("user.login.failed", null, LocaleContextHolder.getLocale());
 		return new ResponseEntity<>(
 				new ErrorInfo(HttpStatus.UNAUTHORIZED, ErrorCode.ERR_ACCESS_DENIED.toString(), message, new Date()),
@@ -50,6 +58,8 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
+		LOGGER.error(ex.getMessage());
+		
 		String message = messageSource.getMessage("user.access.denied", null, LocaleContextHolder.getLocale());
 		return new ResponseEntity<>(
 				new ErrorInfo(HttpStatus.UNAUTHORIZED, ErrorCode.ERR_ACCESS_DENIED.toString(), message, new Date()),
@@ -58,6 +68,7 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(TweetAppException.class)
 	public ResponseEntity<Object> handleDurbariesException(TweetAppException ex) {
+		LOGGER.error(ex.getMessage());
 
 		if (ex.getErrorCode().equals(ErrorCode.ERR_NOT_FOUND.toString())) {
 			return new ResponseEntity<>(
@@ -91,6 +102,8 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
+		LOGGER.error(ex.getMessage());
+		
 		JsonMappingException jsonMappingException = (JsonMappingException) ex.getCause();
 		List<String> errors = jsonMappingException.getPath().stream()
 				.map(jme -> String.format(
@@ -108,6 +121,7 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
+		LOGGER.error(ex.getMessage());
 
 		List<String> errors = ex.getBindingResult().getFieldErrors().stream()
 				.map(x -> String.format(
