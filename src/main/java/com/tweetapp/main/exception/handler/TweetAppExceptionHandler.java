@@ -37,9 +37,10 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(BadCredentialsException.class)
 	public ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex) {
-		LOGGER.error(ex.getMessage());
-		
 		String message = messageSource.getMessage("user.login.failed", null, LocaleContextHolder.getLocale());
+		
+		LOGGER.error("BadCredentialsException with Details: "+ message);
+		
 		return new ResponseEntity<>(
 				new ErrorInfo(HttpStatus.UNAUTHORIZED, ErrorCode.ERR_ACCESS_DENIED.toString(), message, new Date()),
 				HttpStatus.UNAUTHORIZED);
@@ -48,9 +49,10 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(InternalAuthenticationServiceException.class)
 	public ResponseEntity<Object> handleInternalAuthenticationServiceException(
 			InternalAuthenticationServiceException ex) {
-		LOGGER.error(ex.getMessage());
-		
 		String message = messageSource.getMessage("user.login.failed", null, LocaleContextHolder.getLocale());
+		
+		LOGGER.error("InternalAuthenticationServiceException with Details: "+ message);
+		
 		return new ResponseEntity<>(
 				new ErrorInfo(HttpStatus.UNAUTHORIZED, ErrorCode.ERR_ACCESS_DENIED.toString(), message, new Date()),
 				HttpStatus.UNAUTHORIZED);
@@ -67,8 +69,8 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler(TweetAppException.class)
-	public ResponseEntity<Object> handleDurbariesException(TweetAppException ex) {
-		LOGGER.error(ex.getMessage());
+	public ResponseEntity<Object> handleTweetAppException(TweetAppException ex) {
+		LOGGER.error("TweetAppException with Details: "+ ex.getMessage());
 
 		if (ex.getErrorCode().equals(ErrorCode.ERR_NOT_FOUND.toString())) {
 			return new ResponseEntity<>(
@@ -102,7 +104,7 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		LOGGER.error(ex.getMessage());
+		LOGGER.error("HttpMessageNotReadableException with Details: "+ ex.getMessage());
 		
 		JsonMappingException jsonMappingException = (JsonMappingException) ex.getCause();
 		List<String> errors = jsonMappingException.getPath().stream()
@@ -121,7 +123,7 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		LOGGER.error(ex.getMessage());
+		LOGGER.error("MethodArgumentNotValidException with Details: "+ ex.getMessage());
 
 		List<String> errors = ex.getBindingResult().getFieldErrors().stream()
 				.map(x -> String.format(
