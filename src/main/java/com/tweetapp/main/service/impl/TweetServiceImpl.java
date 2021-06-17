@@ -1,5 +1,6 @@
 package com.tweetapp.main.service.impl;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -116,9 +117,9 @@ public class TweetServiceImpl implements TweetService {
 
 		Collections.reverse(tweets);
 
-		tweets.forEach(tweet -> tweetsResponse
-				.add(TweetsResponse.builder().id(tweet.getId()).name(tweet.getFirstName() + " " + tweet.getLastName())
-						.tweets(tweet.getTweet()).likes(tweet.getLikes()).replies(tweet.getReplies()).build()));
+		tweets.forEach(tweet -> tweetsResponse.add(TweetsResponse.builder().id(tweet.getId())
+				.name(tweet.getFirstName() + " " + tweet.getLastName()).tweets(tweet.getTweet()).likes(tweet.getLikes())
+				.replies(tweet.getReplies()).postTime(tweet.getPostTime()).build()));
 
 		return tweetsResponse;
 	}
@@ -160,9 +161,9 @@ public class TweetServiceImpl implements TweetService {
 
 		Collections.reverse(tweets);
 
-		tweets.forEach(tweet -> tweetsResponse
-				.add(TweetsResponse.builder().id(tweet.getId()).name(tweet.getFirstName() + " " + tweet.getLastName())
-						.tweets(tweet.getTweet()).likes(tweet.getLikes()).replies(tweet.getReplies()).build()));
+		tweets.forEach(tweet -> tweetsResponse.add(TweetsResponse.builder().id(tweet.getId())
+				.name(tweet.getFirstName() + " " + tweet.getLastName()).tweets(tweet.getTweet()).likes(tweet.getLikes())
+				.replies(tweet.getReplies()).postTime(tweet.getPostTime()).build()));
 
 		return tweetsResponse;
 	}
@@ -176,7 +177,7 @@ public class TweetServiceImpl implements TweetService {
 			User user = optionalUser.get();
 			Tweets tweets = Tweets.builder().firstName(user.getFirstName()).lastName(user.getLastName())
 					.username(username).tweet(tweetAddRequest.getTweet()).likes(new ArrayList<>())
-					.replies(new ArrayList<>()).build();
+					.replies(new ArrayList<>()).postTime(Instant.now().getEpochSecond()).build();
 
 			tweetsRepository.save(tweets);
 
@@ -198,7 +199,7 @@ public class TweetServiceImpl implements TweetService {
 			Tweets tweets = optionalTweets.get();
 			if (StringUtils.equals(tweets.getUsername(), username)) {
 				tweets.setTweet(tweet);
-
+				tweets.setPostTime(Instant.now().getEpochSecond());
 				tweetsRepository.save(tweets);
 
 				return TweetAddResponse.builder().message(

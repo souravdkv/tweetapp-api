@@ -25,4 +25,6 @@ public class TweetsResponse {
 	private List<TweetLike> likes;
 
 	private List<TweetReply> replies;
+	
+	private long postTime;
 }
