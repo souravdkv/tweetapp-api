@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -278,7 +279,8 @@ public class TweetServiceImpl implements TweetService {
 			Tweets tweets = optionalTweets.get();
 
 			List<TweetReply> replies = tweets.getReplies();
-			replies.add(TweetReply.builder().username(username).message(reply).build());
+			replies.add(
+					TweetReply.builder().id(UUID.randomUUID().toString()).username(username).message(reply).build());
 
 			tweets.setReplies(replies);
 			tweetsRepository.save(tweets);
@@ -305,5 +307,31 @@ public class TweetServiceImpl implements TweetService {
 					messageSource.getMessage("user.email.inuse", null, LocaleContextHolder.getLocale()), email));
 
 		}
+	}
+
+	@Override
+	public void deleteReply(String username, String replyId, String tweetId) {
+		Optional<Tweets> optionalTweets = tweetsRepository.findById(tweetId);
+		optionalTweets.ifPresent(tweet -> {
+			List<TweetReply> replies = tweet.getReplies();
+			replies.removeIf(reply -> StringUtils.equals(reply.getId(), replyId)
+					&& StringUtils.equals(reply.getUsername(), username));
+			tweet.setReplies(replies);
+			tweetsRepository.save(tweet);
+		});
+	}
+
+	@Override
+	public TweetsResponse getTweet(String tweetId) {
+		Optional<Tweets> optionalTweets = tweetsRepository.findById(tweetId);
+		if (optionalTweets.isPresent()) {
+			Tweets tweet = optionalTweets.get();
+			return TweetsResponse.builder().id(tweet.getId()).name(tweet.getFirstName() + " " + tweet.getLastName())
+					.tweets(tweet.getTweet()).likes(tweet.getLikes()).replies(tweet.getReplies())
+					.postTime(tweet.getPostTime()).build();
+		}
+		
+		throw ErrorCode.ERR_INPUT_VALIDATION
+				.getException(messageSource.getMessage("user.input.invalid", null, LocaleContextHolder.getLocale()));
 	}
 }

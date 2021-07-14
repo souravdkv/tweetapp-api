@@ -1,7 +1,7 @@
 package com.tweetapp.main.controller;
 
 import static com.tweetapp.main.util.ControllerConstants.ADD_TWEET;
-import static com.tweetapp.main.util.ControllerConstants.ALL_TWEETS;
+import static com.tweetapp.main.util.ControllerConstants.*;
 import static com.tweetapp.main.util.ControllerConstants.ALL_TWEETS_USERNAME;
 import static com.tweetapp.main.util.ControllerConstants.ALL_USERS;
 import static com.tweetapp.main.util.ControllerConstants.DELETE_TWEET;
@@ -161,5 +161,22 @@ public class TweetController {
 		tweetService.replyTweet(username, id, replyRequest.getReply());
 
 		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@DeleteMapping(DELETE_REPLY_TWEET)
+	public ResponseEntity<Void> deleteReply(@PathVariable String username, @PathVariable String tweetId,
+			@PathVariable String replyId) {
+
+		tweetService.deleteReply(username, replyId, tweetId);
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	@GetMapping(TWEET)
+	public ResponseEntity<TweetsResponse> getTweet(@PathVariable String tweetId) {
+
+		TweetsResponse response = tweetService.getTweet(tweetId);
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }

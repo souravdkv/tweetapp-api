@@ -25,7 +25,7 @@ public class SwaggerConfig {
 			DEFAULT_CONTACT, "licence", "tweetapp.com/licence", new ArrayList<>());
 
 	protected static final Set<String> DEFAULT_PRODUCES_AND_CONSUMES = new HashSet<>(
-			Arrays.asList(MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE));
+			Arrays.asList(MediaType.APPLICATION_JSON_VALUE));
 
 	@Bean
 	public Docket api() {

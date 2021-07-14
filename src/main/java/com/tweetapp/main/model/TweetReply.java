@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TweetReply {
+	private String id;
 	private String username;
 	private String message;
 }

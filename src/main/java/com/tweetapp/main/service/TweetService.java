@@ -40,4 +40,8 @@ public interface TweetService {
 	void dislikeTweet(String username, String id);
 
 	void replyTweet(String username, String id, String reply);
+
+	void deleteReply(String username, String replyId, String tweetId);
+
+	TweetsResponse getTweet(String tweetId);
 }
