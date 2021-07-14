@@ -274,13 +274,14 @@ public class TweetServiceImpl implements TweetService {
 	@Override
 	public void replyTweet(String username, String id, String reply) {
 		Optional<Tweets> optionalTweets = tweetsRepository.findById(id);
-
-		if (optionalTweets.isPresent()) {
+		Optional<User> optionalUser = userRepository.findByUsername(username);
+		if (optionalTweets.isPresent() && optionalUser.isPresent()) {
 			Tweets tweets = optionalTweets.get();
+			User user = optionalUser.get();
 
 			List<TweetReply> replies = tweets.getReplies();
-			replies.add(
-					TweetReply.builder().id(UUID.randomUUID().toString()).username(username).message(reply).build());
+			replies.add(TweetReply.builder().id(UUID.randomUUID().toString()).username(username)
+					.name(user.getFirstName() + " " + user.getLastName()).message(reply).build());
 
 			tweets.setReplies(replies);
 			tweetsRepository.save(tweets);
@@ -330,7 +331,7 @@ public class TweetServiceImpl implements TweetService {
 					.tweets(tweet.getTweet()).likes(tweet.getLikes()).replies(tweet.getReplies())
 					.postTime(tweet.getPostTime()).build();
 		}
-		
+
 		throw ErrorCode.ERR_INPUT_VALIDATION
 				.getException(messageSource.getMessage("user.input.invalid", null, LocaleContextHolder.getLocale()));
 	}
