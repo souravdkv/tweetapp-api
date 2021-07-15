@@ -17,6 +17,8 @@ import lombok.NoArgsConstructor;
 public class TweetsResponse {
 
 	private String id;
+	
+	private String username;
 
 	private String name;
 

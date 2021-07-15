@@ -118,9 +118,10 @@ public class TweetServiceImpl implements TweetService {
 
 		Collections.reverse(tweets);
 
-		tweets.forEach(tweet -> tweetsResponse.add(TweetsResponse.builder().id(tweet.getId())
-				.name(tweet.getFirstName() + " " + tweet.getLastName()).tweets(tweet.getTweet()).likes(tweet.getLikes())
-				.replies(tweet.getReplies()).postTime(tweet.getPostTime()).build()));
+		tweets.forEach(
+				tweet -> tweetsResponse.add(TweetsResponse.builder().id(tweet.getId()).username(tweet.getUsername())
+						.name(tweet.getFirstName() + " " + tweet.getLastName()).tweets(tweet.getTweet())
+						.likes(tweet.getLikes()).replies(tweet.getReplies()).postTime(tweet.getPostTime()).build()));
 
 		return tweetsResponse;
 	}
@@ -162,9 +163,10 @@ public class TweetServiceImpl implements TweetService {
 
 		Collections.reverse(tweets);
 
-		tweets.forEach(tweet -> tweetsResponse.add(TweetsResponse.builder().id(tweet.getId())
-				.name(tweet.getFirstName() + " " + tweet.getLastName()).tweets(tweet.getTweet()).likes(tweet.getLikes())
-				.replies(tweet.getReplies()).postTime(tweet.getPostTime()).build()));
+		tweets.forEach(
+				tweet -> tweetsResponse.add(TweetsResponse.builder().id(tweet.getId()).username(tweet.getUsername())
+						.name(tweet.getFirstName() + " " + tweet.getLastName()).tweets(tweet.getTweet())
+						.likes(tweet.getLikes()).replies(tweet.getReplies()).postTime(tweet.getPostTime()).build()));
 
 		return tweetsResponse;
 	}
@@ -329,7 +331,7 @@ public class TweetServiceImpl implements TweetService {
 			Tweets tweet = optionalTweets.get();
 			return TweetsResponse.builder().id(tweet.getId()).name(tweet.getFirstName() + " " + tweet.getLastName())
 					.tweets(tweet.getTweet()).likes(tweet.getLikes()).replies(tweet.getReplies())
-					.postTime(tweet.getPostTime()).build();
+					.username(tweet.getUsername()).postTime(tweet.getPostTime()).build();
 		}
 
 		throw ErrorCode.ERR_INPUT_VALIDATION
