@@ -283,7 +283,8 @@ public class TweetServiceImpl implements TweetService {
 
 			List<TweetReply> replies = tweets.getReplies();
 			replies.add(TweetReply.builder().id(UUID.randomUUID().toString()).username(username)
-					.name(user.getFirstName() + " " + user.getLastName()).message(reply).build());
+					.name(user.getFirstName() + " " + user.getLastName()).message(reply)
+					.replyTime(Instant.now().getEpochSecond()).build());
 
 			tweets.setReplies(replies);
 			tweetsRepository.save(tweets);

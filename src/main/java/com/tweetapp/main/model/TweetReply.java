@@ -14,4 +14,5 @@ public class TweetReply {
 	private String name;
 	private String username;
 	private String message;
+	private long replyTime;
 }
