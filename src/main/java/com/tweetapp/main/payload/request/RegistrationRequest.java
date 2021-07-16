@@ -29,7 +29,7 @@ public class RegistrationRequest {
 	private String username;
 
 	@NotBlank
-	@Size(min = 8)
+	@Size(min = 8, max = 20)
 	private String password;
 
 	@NotBlank

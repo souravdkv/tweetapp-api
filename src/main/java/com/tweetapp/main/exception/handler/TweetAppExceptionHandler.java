@@ -136,15 +136,17 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		String loggingMessage = "MethodArgumentNotValidException with Details: " + ex.getMessage();
-		kafkaProducer.publish(loggingMessage);
-		LOG.error(loggingMessage);
 
 		List<String> errors = ex.getBindingResult().getFieldErrors().stream()
 				.map(x -> String.format(
 						messageSource.getMessage("request.argument.invalid", null, LocaleContextHolder.getLocale()),
 						x.getField(), x.getDefaultMessage()))
 				.collect(Collectors.toList());
+
+		String loggingMessage = "MethodArgumentNotValidException with Details: " + errors;
+		kafkaProducer.publish(loggingMessage);
+		LOG.error(loggingMessage);
+
 		return new ResponseEntity<>(
 				new ErrorInfo(HttpStatus.BAD_REQUEST, ErrorCode.ERR_INPUT_VALIDATION.toString(), errors, new Date()),
 				HttpStatus.BAD_REQUEST);
