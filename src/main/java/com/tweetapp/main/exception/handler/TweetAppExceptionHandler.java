@@ -26,21 +26,26 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.tweetapp.main.exception.TweetAppException;
 import com.tweetapp.main.exception.model.ErrorCode;
 import com.tweetapp.main.exception.model.ErrorInfo;
+import com.tweetapp.main.kafka.producer.TweetAppKafkaProducer;
 
 @ControllerAdvice
 public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 
-	private static final Logger LOGGER = LogManager.getLogger(TweetAppExceptionHandler.class);
-	
+	private static final Logger LOG = LogManager.getLogger(TweetAppExceptionHandler.class);
+
 	@Autowired
 	private MessageSource messageSource;
+
+	@Autowired
+	private TweetAppKafkaProducer kafkaProducer;
 
 	@ExceptionHandler(BadCredentialsException.class)
 	public ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex) {
 		String message = messageSource.getMessage("user.login.failed", null, LocaleContextHolder.getLocale());
-		
-		LOGGER.error("BadCredentialsException with Details: "+ message);
-		
+		String loggingMessage = "BadCredentialsException with Details: " + message;
+		kafkaProducer.publish(loggingMessage);
+		LOG.error(loggingMessage);
+
 		return new ResponseEntity<>(
 				new ErrorInfo(HttpStatus.UNAUTHORIZED, ErrorCode.ERR_ACCESS_DENIED.toString(), message, new Date()),
 				HttpStatus.UNAUTHORIZED);
@@ -50,9 +55,11 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<Object> handleInternalAuthenticationServiceException(
 			InternalAuthenticationServiceException ex) {
 		String message = messageSource.getMessage("user.login.failed", null, LocaleContextHolder.getLocale());
-		
-		LOGGER.error("InternalAuthenticationServiceException with Details: "+ message);
-		
+
+		String loggingMessage = "InternalAuthenticationServiceException with Details: " + message;
+		kafkaProducer.publish(loggingMessage);
+		LOG.error(loggingMessage);
+
 		return new ResponseEntity<>(
 				new ErrorInfo(HttpStatus.UNAUTHORIZED, ErrorCode.ERR_ACCESS_DENIED.toString(), message, new Date()),
 				HttpStatus.UNAUTHORIZED);
@@ -60,8 +67,10 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
-		LOGGER.error(ex.getMessage());
-		
+		String loggingMessage = ex.getMessage();
+		kafkaProducer.publish(loggingMessage);
+		LOG.error(loggingMessage);
+
 		String message = messageSource.getMessage("user.access.denied", null, LocaleContextHolder.getLocale());
 		return new ResponseEntity<>(
 				new ErrorInfo(HttpStatus.UNAUTHORIZED, ErrorCode.ERR_ACCESS_DENIED.toString(), message, new Date()),
@@ -70,7 +79,9 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(TweetAppException.class)
 	public ResponseEntity<Object> handleTweetAppException(TweetAppException ex) {
-		LOGGER.error("TweetAppException with Details: "+ ex.getMessage());
+		String loggingMessage = "TweetAppException with Details: " + ex.getMessage();
+		kafkaProducer.publish(loggingMessage);
+		LOG.error(loggingMessage);
 
 		if (ex.getErrorCode().equals(ErrorCode.ERR_NOT_FOUND.toString())) {
 			return new ResponseEntity<>(
@@ -104,8 +115,10 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		LOGGER.error("HttpMessageNotReadableException with Details: "+ ex.getMessage());
-		
+		String loggingMessage = "HttpMessageNotReadableException with Details: " + ex.getMessage();
+		kafkaProducer.publish(loggingMessage);
+		LOG.error(loggingMessage);
+
 		JsonMappingException jsonMappingException = (JsonMappingException) ex.getCause();
 		List<String> errors = jsonMappingException.getPath().stream()
 				.map(jme -> String.format(
@@ -123,7 +136,9 @@ public class TweetAppExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		LOGGER.error("MethodArgumentNotValidException with Details: "+ ex.getMessage());
+		String loggingMessage = "MethodArgumentNotValidException with Details: " + ex.getMessage();
+		kafkaProducer.publish(loggingMessage);
+		LOG.error(loggingMessage);
 
 		List<String> errors = ex.getBindingResult().getFieldErrors().stream()
 				.map(x -> String.format(
